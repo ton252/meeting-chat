@@ -2,9 +2,9 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:meeting_chat/models/message.dart';
 import 'package:meeting_chat/user_stories/common/message_input_bar.dart';
 
-import 'income_message_cell.dart';
 import 'outcome_message_cell.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -15,9 +15,24 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  final List<Message> _messages = [];
+  final _listKey = GlobalKey<SliverAnimatedListState>();
+  final _messageController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _messageController.addListener(_onTextUpdate);
+  }
+
+  @override
+  void dispose() {
+    _messageController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    // final height = MediaQuery.of(context).size.height;
     return CupertinoPageScaffold(
       navigationBar: const CupertinoNavigationBar(
         middle: Text("Chat"),
@@ -35,21 +50,34 @@ class _ChatScreenState extends State<ChatScreen> {
                     keyboardDismissBehavior:
                         ScrollViewKeyboardDismissBehavior.onDrag,
                     slivers: [
-                      SliverList(
-                        delegate: SliverChildBuilderDelegate((context, index) {
-                          final isOutcome = (index % 2) == 0;
-                          final body = generateRandomString(1, 200);
-                          return isOutcome
-                              ? OutcomeMessage(body: body)
-                              : IncomeMessage(body: body);
-                        }, childCount: 100),
+                      SliverAnimatedList(
+                        key: _listKey,
+                        initialItemCount: _messages.length,
+                        itemBuilder: ((context, index, animation) {
+                          final msg = _messages[index];
+                          return _animatedTransition(
+                            animation: animation,
+                            widget: OutcomeMessage(body: msg.body),
+                          );
+                        }),
                       ),
                     ],
                   ),
                 ),
               ),
-              const MessageInputBar(),
-              Container(color: Colors.green),
+              MessageInputBar(
+                controller: _messageController,
+                onSendEnabled: _messageController.text.isNotEmpty,
+                onSendPressed: () {
+                  _addMessage(
+                    Message(
+                      date: DateTime.now(),
+                      body: _messageController.text,
+                      sender: "sender",
+                    ),
+                  );
+                },
+              ),
             ],
           ),
         ),
@@ -57,8 +85,34 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  void _addMessage(Message msg) {
+    _messageController.text = "";
+    _messages.insert(0, msg);
+    _listKey.currentState?.insertItem(0);
+  }
+
+  void _onTextUpdate() {
+    setState(() {});
+  }
+
   void _unfocus() {
     FocusManager.instance.primaryFocus?.unfocus();
+  }
+
+  Widget _animatedTransition({
+    required Animation<double> animation,
+    required Widget widget,
+  }) {
+    return SlideTransition(
+      position: animation.drive(Tween<Offset>(
+        begin: const Offset(0, 1),
+        end: Offset.zero,
+      ).chain(CurveTween(curve: Curves.easeInOut))),
+      child: FadeTransition(
+        opacity: animation,
+        child: widget,
+      ),
+    );
   }
 }
 

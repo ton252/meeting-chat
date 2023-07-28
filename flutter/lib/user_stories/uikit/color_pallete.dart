@@ -2,6 +2,7 @@ import 'dart:ui';
 
 class ColorPalette {
   final Color text;
+  final Color textSecondary;
   final Color border;
   final Color primary;
   final Color contrast;
@@ -10,6 +11,7 @@ class ColorPalette {
 
   const ColorPalette({
     required this.text,
+    required this.textSecondary,
     required this.border,
     required this.primary,
     required this.contrast,
@@ -20,6 +22,7 @@ class ColorPalette {
   static ColorPalette get light {
     return const ColorPalette(
       text: Color(0xFF000000),
+      textSecondary: Color(0xFF818A96),
       border: Color(0xFFE1E3E6),
       primary: Color(0xFF4586E4),
       contrast: Color(0xFFFFFFFF),

@@ -5,27 +5,39 @@ import 'package:meeting_chat/user_stories/uikit/color_pallete.dart';
 class MessageInputBar extends StatelessWidget {
   final FocusNode? focusNode;
   final TextEditingController? controller;
+  final String? placeholder;
+  final bool onSendEnabled;
+  final VoidCallback? onSendPressed;
 
   const MessageInputBar({
     super.key,
     this.focusNode,
-    this.controller,
+    required this.controller,
+    this.placeholder = "Message",
+    this.onSendEnabled = true,
+    this.onSendPressed,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-        color: ColorPalette.light.background,
-        padding: const EdgeInsets.only(
-          top: 8.0,
-          bottom: 8.0,
-          left: 16.0,
-          right: 0.0,
-        ),
-        child: Row(children: [
+      color: ColorPalette.light.background,
+      padding: const EdgeInsets.only(
+        top: 8.0,
+        bottom: 8.0,
+        left: 16.0,
+        right: 0.0,
+      ),
+      child: Row(
+        children: [
           Expanded(child: __textField()),
-          const SendButton(),
-        ]));
+          SendButton(
+            enabled: onSendEnabled,
+            onPressed: onSendPressed,
+          ),
+        ],
+      ),
+    );
   }
 
   @widgetFactory
@@ -40,17 +52,25 @@ class MessageInputBar extends StatelessWidget {
         ),
       ),
       child: CupertinoTextField(
-          focusNode: focusNode,
-          controller: controller,
-          decoration: null,
-          padding: const EdgeInsets.symmetric(
-            vertical: 7.0,
-            horizontal: 15.0,
-          ),
-          style: TextStyle(
-            color: ColorPalette.light.text,
-            fontSize: 17,
-          )),
+        focusNode: focusNode,
+        controller: controller,
+        placeholder: placeholder,
+        decoration: null,
+        minLines: 1,
+        maxLines: 6,
+        padding: const EdgeInsets.symmetric(
+          vertical: 7.0,
+          horizontal: 15.0,
+        ),
+        style: TextStyle(
+          color: ColorPalette.light.text,
+          fontSize: 17,
+        ),
+        placeholderStyle: TextStyle(
+          color: ColorPalette.light.textSecondary,
+          fontSize: 17,
+        ),
+      ),
     );
   }
 }

@@ -19,13 +19,15 @@ class SendButton extends StatelessWidget {
         vertical: 8.0,
         horizontal: 8.0,
       ),
-      onPressed: onPressed ?? () => {},
+      onPressed: enabled ? (onPressed ?? () => {}) : null,
       child: Container(
         width: 34.0,
         height: 34.0,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(22.0),
-          color: ColorPalette.light.primary,
+          color: enabled
+              ? ColorPalette.light.primary
+              : ColorPalette.light.border,
         ),
         alignment: Alignment.center,
         child: SvgPicture.asset(
