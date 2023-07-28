@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:meeting_chat/user_stories/chat/chat_screen.dart';
 import 'package:meeting_chat/user_stories/events/events_screen.dart';
 
 class Application extends StatelessWidget {
@@ -13,7 +14,7 @@ class Application extends StatelessWidget {
           useMaterial3: true,
         ),
         home: const CupertinoApp(
-          home: EventsScreen(),
+          home: ChatScreen(), //EventsScreen(),
         ));
   }
 }
